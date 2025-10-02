@@ -36,17 +36,20 @@ public:
         table[index].emplace_back(key, value);
     }
 
-    // Búsqueda de un valor por clave
-    int search(const std::string& key) {
-        int index = hashFunction(key);
-        for (const auto& pair : table[index]) {
-            if (pair.first == key) {
-                return pair.second; // Retorna el valor si se encuentra la clave
-            }
+  // Buscar cantidad de producto
+int buscarCantidad(const std::string& producto) {
+    int index = hashFunction(producto);
+    for (const auto& par : table[index]) {
+        if (par.first == producto) {
+            std::cout << "Cantidad disponible de '" << producto 
+                      << "': " << par.second << std::endl;
+            return par.second;
         }
-        return -1; // Retorna -1 si la clave no se encuentra
     }
-
+    std::cout << "Producto '" << producto 
+              << "' no encontrado en el inventario." << std::endl;
+    return -1;
+}
     // Eliminación de un par clave-valor
     void remove(const std::string& key) {
         int index = hashFunction(key);
@@ -81,9 +84,8 @@ int main() {
     std::cout << "Tabla hash después de inserciones:" << std::endl;
     ht.display();
 
-    std::cout << "Buscar 'banana': " << ht.search("banana") << std::endl;
-    std::cout << "Buscar 'grape': " << ht.search("grape") << std::endl;
-
+ht.buscarCantidad("banana");
+ht.buscarCantidad("grape");
     ht.remove("banana");
     std::cout << "Tabla hash después de eliminar 'banana':" << std::endl;
     ht.display();
