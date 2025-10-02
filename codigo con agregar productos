@@ -31,8 +31,18 @@ public:
         table[index].emplace_back(key, value);      // nueva entrada
     }
 
-    // (Stubs no usados en el punto A; se dejan para futura ampliación)
-    int search(const std::string& key) { return -1; }
+    // ✅ Buscar cantidad del producto
+    int search(const std::string& key) {
+        int index = hashFunction(key);
+        for (auto& pair : table[index]) {
+            if (pair.first == key) {
+                return pair.second;   // devuelve la cantidad
+            }
+        }
+        return -1; // si no existe
+    }
+
+    // (Se dejan para futuras ampliaciones)
     void remove(const std::string& key) {}
     void display() {}
 };
@@ -41,8 +51,9 @@ int main() {
     HashTable inventario(17); // capacidad base
 
     while (true) {
-        std::cout << "\n=== Sistema de Inventario (Solo Punto A) ===\n";
+        std::cout << "\n=== Sistema de Inventario ===\n";
         std::cout << "a) Agregar producto (nombre y cantidad)\n";
+        std::cout << "b) Buscar cantidad de producto\n";
         std::cout << "e) Salir\n";
         std::cout << "Elige una opcion: ";
 
@@ -63,7 +74,6 @@ int main() {
             std::cout << "Cantidad (entero >= 0): ";
             if (!std::getline(std::cin, s)) { std::cout << "Entrada invalida.\n"; continue; }
 
-            // validar entero
             try {
                 size_t pos = 0;
                 long long v = std::stoll(s, &pos, 10);
@@ -72,7 +82,6 @@ int main() {
                     continue;
                 }
 
-                // Inserta o actualiza la cantidad para ese nombre
                 inventario.insert(nombre, (int)v);
                 std::cout << "Producto '" << nombre << "' agregado/actualizado con cantidad " << v << ".\n";
             } catch (...) {
@@ -80,12 +89,28 @@ int main() {
                 continue;
             }
 
+        } else if (op == "b") {
+            // --- Punto B: Buscar cantidad ---
+            std::string nombre;
+            std::cout << "Nombre del producto a buscar: ";
+            if (!std::getline(std::cin, nombre) || nombre.empty()) {
+                std::cout << "Nombre invalido.\n";
+                continue;
+            }
+
+            int cantidad = inventario.search(nombre);
+            if (cantidad == -1) {
+                std::cout << "El producto '" << nombre << "' no se encuentra en el inventario.\n";
+            } else {
+                std::cout << "El producto '" << nombre << "' tiene cantidad: " << cantidad << ".\n";
+            }
+
         } else if (op == "e" || op == "salir" || op == "exit") {
             std::cout << "Saliendo...\n";
             break;
 
         } else {
-            std::cout << "Opcion no valida. Solo 'a' o 'e'.\n";
+            std::cout << "Opcion no valida. Solo 'a', 'b' o 'e'.\n";
         }
     }
 
