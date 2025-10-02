@@ -1,0 +1,93 @@
+#include <iostream>
+#include <list>
+#include <vector>
+#include <string>
+
+class HashTable {
+private:
+    int capacity;
+    std::vector<std::list<std::pair<std::string, int>>> table;
+
+    int hashFunction(const std::string& key) {
+        int hashValue = 0;
+        for (char ch : key) hashValue += ch;        // hash sencillo
+        return hashValue % capacity;
+    }
+
+public:
+    HashTable(int size) : capacity(size) {
+        table.resize(capacity);
+    }
+
+    // Inserta o actualiza (si la clave ya existe)
+    void insert(const std::string& key, int value) {
+        int index = hashFunction(key);
+        for (auto& pair : table[index]) {
+            if (pair.first == key) {
+                pair.second = value;                // actualiza cantidad
+                return;
+            }
+        }
+        table[index].emplace_back(key, value);      // nueva entrada
+    }
+
+    // (Stubs no usados en el punto A; se dejan para futura ampliación)
+    int search(const std::string& key) { return -1; }
+    void remove(const std::string& key) {}
+    void display() {}
+};
+
+int main() {
+    HashTable inventario(17); // capacidad base
+
+    while (true) {
+        std::cout << "\n=== Sistema de Inventario (Solo Punto A) ===\n";
+        std::cout << "a) Agregar producto (nombre y cantidad)\n";
+        std::cout << "e) Salir\n";
+        std::cout << "Elige una opcion: ";
+
+        std::string op;
+        if (!std::getline(std::cin, op)) break;
+        if (!op.empty()) op[0] = (char)tolower(op[0]);
+
+        if (op == "a") {
+            // --- Punto A: Agregar productos ---
+            std::string nombre;
+            std::cout << "Nombre del producto: ";
+            if (!std::getline(std::cin, nombre) || nombre.empty()) {
+                std::cout << "Nombre invalido.\n";
+                continue;
+            }
+
+            std::string s;
+            std::cout << "Cantidad (entero >= 0): ";
+            if (!std::getline(std::cin, s)) { std::cout << "Entrada invalida.\n"; continue; }
+
+            // validar entero
+            try {
+                size_t pos = 0;
+                long long v = std::stoll(s, &pos, 10);
+                if (pos != s.size() || v < 0 || v > INT32_MAX) {
+                    std::cout << "Cantidad invalida.\n";
+                    continue;
+                }
+
+                // Inserta o actualiza la cantidad para ese nombre
+                inventario.insert(nombre, (int)v);
+                std::cout << "Producto '" << nombre << "' agregado/actualizado con cantidad " << v << ".\n";
+            } catch (...) {
+                std::cout << "Cantidad invalida.\n";
+                continue;
+            }
+
+        } else if (op == "e" || op == "salir" || op == "exit") {
+            std::cout << "Saliendo...\n";
+            break;
+
+        } else {
+            std::cout << "Opcion no valida. Solo 'a' o 'e'.\n";
+        }
+    }
+
+    return 0;
+}
