@@ -31,7 +31,7 @@ public:
         table[index].emplace_back(key, value);      // nueva entrada
     }
 
-    // ✅ Buscar cantidad del producto
+    // Buscar cantidad del producto
     int search(const std::string& key) {
         int index = hashFunction(key);
         for (auto& pair : table[index]) {
