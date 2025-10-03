@@ -9,6 +9,7 @@ class HashTable {
 private:
     int capacity;
     std::vector<std::list<std::pair<std::string, int>>> table;
+    int elementos = 0;
 
     int hashFunction(const std::string& key) {
         int hashValue = 0;
@@ -20,6 +21,8 @@ public:
     HashTable(int size) : capacity(size) {
         table.resize(capacity);
     }
+    
+    bool empty() const { return elementos == 0; }
 
     // Inserta o actualiza producto
     void insert(const std::string& key, int value) {
@@ -31,6 +34,7 @@ public:
             }
         }
         table[index].emplace_back(key, value); // nueva entrada
+        ++elementos;
     }
 
     // Buscar cantidad del producto
@@ -51,6 +55,7 @@ public:
         for (auto it = bucket.begin(); it != bucket.end(); ++it) {
             if (it->first == key) {
                 bucket.erase(it);
+                --elementos;
                 std::cout << "Producto '" << key << "' eliminado.\n";
                 return;
             }
@@ -58,8 +63,25 @@ public:
         std::cout << "El producto '" << key << "' no existe en el inventario.\n";
     }
 
-    // Mostrar inventario (pendiente de implementar en opción d)
-    void display() {}
+    // Mostrar inventario
+    void display() {
+        if(empty()) {
+            std::cout << "No hay elementos en tabla." << std::endl;
+            return;
+        }
+        
+        for (int i = 0; i < capacity; ++i) {
+            const auto& tabla = table[i];
+            if(tabla.empty()) continue;
+            
+            std::cout << "Elemento " << i << ":\n";
+            for (const auto& pair : table[i]) {
+                std::cout << "{" << pair.first << ": " << pair.second << "} ";
+    		    std::cout << std::endl;
+            }
+        }
+
+    }
 };
 
 int main() {
@@ -70,7 +92,7 @@ int main() {
         std::cout << "a) Agregar producto (nombre y cantidad)\n";
         std::cout << "b) Buscar cantidad de producto\n";
         std::cout << "c) Eliminar producto\n";
-        std::cout << "d) Mostrar inventario (incompleto)\n";
+        std::cout << "d) Mostrar inventario\n";
         std::cout << "e) Salir\n";
         std::cout << "Elige una opcion: ";
 
@@ -135,8 +157,9 @@ int main() {
             inventario.remove(nombre);
 
         } else if (op == "d") {
-            // --- Mostrar inventario (a completar) ---
-            std::cout << "(Funcion mostrar inventario aun no implementada)\n";
+            // --- Mostrar inventario ---
+            std::cout << "--- Mostrar inventario ---\n";
+            inventario.display();
 
         } else if (op == "e" || op == "salir" || op == "exit") {
             std::cout << "Saliendo...\n";
